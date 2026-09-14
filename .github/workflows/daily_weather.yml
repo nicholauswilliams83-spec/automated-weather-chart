@@ -31,7 +31,7 @@ jobs:
 
       - name: Run weather script
         run: |
-          python weather_chart.py
+          python weatherchart.py
 
       - name: Save updated chart
         run: |
