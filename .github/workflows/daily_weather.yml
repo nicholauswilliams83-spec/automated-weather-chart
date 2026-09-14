@@ -1,0 +1,46 @@
+name: Daily Weather Chart
+
+on:
+  schedule:
+    - cron: "7 0 * * *"
+      timezone: "America/Chicago"
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-weather-chart:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run weather script
+        run: |
+          python weather_chart.py
+
+      - name: Save updated chart
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add dallas_7day_temperature.png
+          git add last_updated.txt
+
+          git diff --cached --quiet || git commit -m "Automatic daily weather update"
+
+          git push
