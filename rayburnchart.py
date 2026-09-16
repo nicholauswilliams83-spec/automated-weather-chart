@@ -1,6 +1,9 @@
 import re
+import requests
 import pandas as pd
 import matplotlib
+
+from io import StringIO
 
 matplotlib.use("Agg")
 
@@ -14,7 +17,23 @@ url = (
 )
 
 # Download the CSV directly into pandas
-df = pd.read_csv(url)
+response = requests.get(url)
+response.raise_for_status()
+
+lines = response.text.splitlines()
+
+# Find the real CSV header instead of the metadata above it
+header_index = next(
+    i for i, line in enumerate(lines)
+    if "date" in line.lower() and line.count(",") >= 3
+)
+
+csv_text = "\n".join(lines[header_index:])
+
+df = pd.read_csv(StringIO(csv_text))
+
+print("Found CSV header on line:", header_index + 1)
+print(df.head())
 
 
 # -----------------------------------
