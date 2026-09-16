@@ -33,6 +33,10 @@ jobs:
         run: |
           python weatherchart.py
 
+      - name: Run Sam Rayburn script
+        run: |
+          python rayburnchart.py
+
       - name: Save updated chart
         run: |
           git config user.name "github-actions[bot]"
@@ -40,6 +44,8 @@ jobs:
 
           git add lufkin_7day_temperature.png
           git add last_updated.txt
+          git add sam_rayburn_30day_level.png
+          git add sam_rayburn_latest.txt
 
           git diff --cached --quiet || git commit -m "Automatic daily weather update"
 
